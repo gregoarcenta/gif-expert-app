@@ -6,15 +6,22 @@ import { mockGifs } from "./mock-data/gifs.mock.ts";
 import { useState } from "react";
 
 function GifsApp() {
-  const [previousTerms] = useState(["Dragon ball z"]);
+  const [previousTerms, setPreviousTerms] = useState<string[]>([]);
 
   const handleTermClicked = (term: string) => {
     console.log({ term });
   };
 
   const handleSearch = (query: string) => {
-    console.log({ query });
+    query = query.toLowerCase().trim();
+
+    if (query.length === 0) return;
+
+    if (previousTerms.includes(query)) return;
+
+    setPreviousTerms([query, ...previousTerms.slice(0, 7)]);
   };
+
   return (
     <>
       {/*Header*/}
