@@ -2,15 +2,27 @@ import { useEffect, useState } from "react";
 
 interface SearchBarProps {
   placeholder?: string;
+  currentQuery: string;
   onQuery: (query: string) => void;
 }
 
-function SearchBar({ placeholder = "Buscar gifs", onQuery }: SearchBarProps) {
-  const [query, setQuery] = useState("");
+function SearchBar({
+  placeholder = "Buscar gifs",
+  currentQuery,
+  onQuery,
+}: SearchBarProps) {
+  const [query, setQuery] = useState(currentQuery);
 
   useEffect(() => {
+    setQuery(currentQuery);
+  }, [currentQuery]);
+
+  useEffect(() => {
+    const term = query.toLowerCase().trim();
+    if (term.length === 0) return;
+
     const timeoutId = setTimeout(() => {
-      onQuery(query);
+      onQuery(term);
     }, 700);
 
     return () => {

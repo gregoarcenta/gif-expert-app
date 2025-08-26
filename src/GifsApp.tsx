@@ -5,7 +5,8 @@ import GifsList from "./gifs/components/GifsList.tsx";
 import useGifs from "./gifs/hooks/useGifs.tsx";
 
 function GifsApp() {
-  const { gifs, previousTerms, handleSearch, handleTermClicked } = useGifs();
+  const { gifs, previousTerms, currentQuery, handleSearch, handleTermClicked } =
+    useGifs();
 
   return (
     <>
@@ -16,7 +17,11 @@ function GifsApp() {
       />
 
       {/*search*/}
-      <SearchBar placeholder={"Busca lo que quieras"} onQuery={handleSearch} />
+      <SearchBar
+        placeholder={"Busca lo que quieras"}
+        onQuery={handleSearch}
+        currentQuery={currentQuery}
+      />
 
       {/*busquedas previas*/}
       <PreviousSearches
