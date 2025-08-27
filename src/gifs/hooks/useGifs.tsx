@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import type { Gif } from "../interfaces/gif.interface.ts";
 import { getGifsByQuery } from "../actions/get-gifs-by-query.action.ts";
 
@@ -7,45 +7,40 @@ const gifCache = new Map<string, Gif[]>();
 function useGifs() {
   const [previousTerms, setPreviousTerms] = useState<string[]>([]);
   const [gifs, setGifs] = useState<Gif[]>([]);
-  const [currentQuery, setCurrentQuery] = useState<string>("");
+  const [previousTermClicked, setPreviousTermClicked] = useState<string>("");
 
-  const handleTermClicked = async (term: string) => {
-    setCurrentQuery(term);
+  const getCachedGifs = async (term: string) => {
     const cached = gifCache.get(term);
 
     if (!cached) return setGifs(await getGifsByQuery(term));
-    if (JSON.stringify(gifs) === JSON.stringify(cached)) {
-      // console.log("ya esta en pantalla");
-      return;
-    }
+
+    if (JSON.stringify(gifs) === JSON.stringify(cached)) return;
 
     setGifs(gifCache.get(term)!);
-    // console.log("cache");
   };
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      // console.log("handleSearch", query);
+  const handleTermClicked = async (term: string) => {
+    setPreviousTermClicked(term);
+  };
 
-      if (previousTerms.includes(query)) {
-        return handleTermClicked(query);
-      }
+  const handleSearch = async (query: string) => {
+    if (previousTerms.includes(query)) {
+      return getCachedGifs(query);
+    }
 
-      setPreviousTerms([query, ...previousTerms.slice(0, 7)]);
+    setPreviousTerms([query, ...previousTerms.slice(0, 7)]);
 
-      const gifs = await getGifsByQuery(query);
+    const gifs = await getGifsByQuery(query);
 
-      setGifs(gifs);
-      gifCache.set(query, gifs);
-    },
-    [previousTerms],
-  );
+    setGifs(gifs);
+    gifCache.set(query, gifs);
+  };
 
   return {
     //state
     gifs,
     previousTerms,
-    currentQuery,
+    previousTermClicked,
     //actions
     handleSearch,
     handleTermClicked,

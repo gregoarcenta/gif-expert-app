@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 
 interface SearchBarProps {
   placeholder?: string;
-  currentQuery: string;
+  previousQuery: string;
   onQuery: (query: string) => void;
 }
 
 function SearchBar({
   placeholder = "Buscar gifs",
-  currentQuery,
+  previousQuery,
   onQuery,
 }: SearchBarProps) {
-  const [query, setQuery] = useState(currentQuery);
+  const [query, setQuery] = useState("");
+  const [debounceDelay, setDebounceDelay] = useState(700);
 
   useEffect(() => {
-    setQuery(currentQuery);
-  }, [currentQuery]);
+    setQuery(previousQuery);
+    if (previousQuery.length > 0) setDebounceDelay(0);
+  }, [previousQuery]);
 
   useEffect(() => {
     const term = query.toLowerCase().trim();
@@ -23,16 +25,17 @@ function SearchBar({
 
     const timeoutId = setTimeout(() => {
       onQuery(term);
-    }, 700);
+      setDebounceDelay(700);
+    }, debounceDelay);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [onQuery, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const handleSearch = () => {
     onQuery(query);
-    setQuery("");
   };
 
   return (
