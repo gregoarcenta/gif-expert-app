@@ -19,7 +19,7 @@ function useGifs() {
     setGifs(gifCache.get(term)!);
   };
 
-  const handleTermClicked = async (term: string) => {
+  const handleTermClicked = (term: string) => {
     setPreviousTermClicked(term);
   };
 
