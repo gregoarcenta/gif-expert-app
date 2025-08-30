@@ -37,8 +37,5 @@ exports[`GifsApp > should render component properly 1`] = `
   <div
     class="gifs-container"
   />
-  <button>
-    Search
-  </button>
 </div>
 `;
