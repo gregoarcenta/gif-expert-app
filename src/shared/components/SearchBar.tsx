@@ -31,8 +31,7 @@ function SearchBar({
     return () => {
       clearTimeout(timeoutId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [debounceDelay, onQuery, query]);
 
   const handleSearch = () => {
     onQuery(query);

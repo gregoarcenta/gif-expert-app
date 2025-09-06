@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import { act, renderHook } from "@testing-library/react";
-import useGifs from "./useGifs.tsx";
+import useGifs, { gifCache } from "./useGifs.tsx";
 import * as gifsActions from "../actions/get-gifs-by-query.action.ts";
 import { gifsMock } from "../../../tests/mocks/gifs.data.ts";
 
@@ -43,12 +43,16 @@ describe("useGifs", () => {
       .spyOn(gifsActions, "getGifsByQuery")
       .mockResolvedValueOnce(gifsMock);
 
+    vi.spyOn(gifCache, "get").mockImplementation(() => undefined);
+
     const { result } = renderHook(() => useGifs());
     const query = "goku";
 
     await act(async () => {
       await result.current.handleSearch(query);
     });
+
+    vi.spyOn(gifCache, "get").mockImplementation(() => gifsMock);
 
     await act(async () => {
       await result.current.handleSearch(query);
@@ -61,6 +65,7 @@ describe("useGifs", () => {
     const { result } = renderHook(() => useGifs());
 
     vi.spyOn(gifsActions, "getGifsByQuery").mockResolvedValue([]);
+    vi.spyOn(gifCache, "get").mockImplementation(() => undefined);
 
     await act(async () => {
       await result.current.handleSearch("goku1");
